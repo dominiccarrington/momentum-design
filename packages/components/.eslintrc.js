@@ -26,7 +26,7 @@ module.exports = {
         'newlines-between': 'always',
       },
     ],
-    'rulesdir/css-properties-defined': 'error',
+    'rulesdir/css-property-defined': 'error',
   },
   overrides: [
     {
