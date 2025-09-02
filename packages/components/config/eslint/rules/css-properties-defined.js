@@ -37,18 +37,30 @@ module.exports = {
     }
 
     /**
-     * Extract CSS variable names from styles file content
+     * Extract CSS variable names from styles file content within :host blocks
      * @param stylesContent - The styles file content
      * @returns Set of CSS variable names
      */
     function extractCssVariablesFromStyles(stylesContent) {
       const cssVariables = new Set();
-      const cssVariablePattern = /--([\w-]+):/g;
-      let match = cssVariablePattern.exec(stylesContent);
 
-      while (match !== null) {
-        cssVariables.add(`--${match[1]}`);
-        match = cssVariablePattern.exec(stylesContent);
+      // Find all :host blocks in the content
+      const hostBlockPattern = /:host\s*\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/g;
+      let hostMatch = hostBlockPattern.exec(stylesContent);
+
+      while (hostMatch !== null) {
+        const hostBlockContent = hostMatch[0];
+
+        // Extract CSS variables from within this :host block
+        const cssVariablePattern = /--([\w-]+):/g;
+        let variableMatch = cssVariablePattern.exec(hostBlockContent);
+
+        while (variableMatch !== null) {
+          cssVariables.add(`--${variableMatch[1]}`);
+          variableMatch = cssVariablePattern.exec(hostBlockContent);
+        }
+
+        hostMatch = hostBlockPattern.exec(stylesContent);
       }
 
       return cssVariables;
