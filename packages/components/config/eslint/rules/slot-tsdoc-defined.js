@@ -34,6 +34,11 @@ module.exports = {
                 return;
               }
 
+              // Ignore dynamic parts
+              if (element.attribs.name.startsWith('{{__Q:')) {
+                return;
+              }
+
               if (!slots.has(element.attribs.name)) {
                 context.report({
                   node: classNode.id,

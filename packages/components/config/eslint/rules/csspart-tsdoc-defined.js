@@ -30,6 +30,11 @@ module.exports = {
                 return;
               }
 
+              // Ignore dynamic parts
+              if (element.attribs.part.startsWith('{{__Q:')) {
+                return;
+              }
+
               if (!cssparts.has(element.attribs.part)) {
                 context.report({
                   node: classNode.id,
