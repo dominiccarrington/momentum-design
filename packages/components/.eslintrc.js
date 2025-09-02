@@ -28,6 +28,7 @@ module.exports = {
     ],
     'rulesdir/css-property-defined': 'warn',
     'rulesdir/slot-tsdoc-defined': 'warn',
+    'rulesdir/csspart-tsdoc-defined': 'warn',
   },
   overrides: [
     {

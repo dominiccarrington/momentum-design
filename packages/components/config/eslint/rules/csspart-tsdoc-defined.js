@@ -18,26 +18,22 @@ module.exports = {
           }
 
           const commentsBeforeClass = context.getCommentsBefore(classNode);
-          const slots = new Set(
-            commentsBeforeClass.map(comment => [...extractTagFromComment('slot', comment.value)]).flat(),
+          const cssparts = new Set(
+            commentsBeforeClass.map(comment => [...extractTagFromComment('csspart', comment.value)]).flat(),
           );
 
           const analyzer = TemplateAnalyzer.create(node);
 
           analyzer.traverse({
             enterElement(element) {
-              if (element.name !== 'slot') {
+              if (element.attribs.part === undefined) {
                 return;
               }
 
-              if (element.attribs.name === undefined) {
-                return;
-              }
-
-              if (!slots.has(element.attribs.name)) {
+              if (!cssparts.has(element.attribs.part)) {
                 context.report({
                   node: classNode.id,
-                  message: `The slot "${element.attribs.name}" is used in a template but is missing a @slot TSDoc.`,
+                  message: `The csspart "${element.attribs.part}" is used in a template but is missing a @csspart TSDoc.`,
                 });
               }
             },
