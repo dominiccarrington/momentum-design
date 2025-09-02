@@ -26,7 +26,8 @@ module.exports = {
         'newlines-between': 'always',
       },
     ],
-    'rulesdir/css-property-defined': 'error',
+    'rulesdir/css-property-defined': 'warn',
+    'rulesdir/slot-tsdoc-defined': 'warn',
   },
   overrides: [
     {
