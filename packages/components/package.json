@@ -142,6 +142,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-import-x": "^4.16.1",
     "eslint-plugin-lit": "^1.14.0",
+    "eslint-plugin-rulesdir": "^0.2.2",
     "fs-extra": "^11.2.0",
     "lint-staged": "^16.1.2",
     "pascalcase": "^2.0.0",

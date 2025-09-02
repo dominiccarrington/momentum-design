@@ -1,9 +1,13 @@
 const config = require('../../.eslintrc.js');
 
+const rulesDirPlugin = require('eslint-plugin-rulesdir');
+rulesDirPlugin.RULES_DIR = 'config/eslint/rules';
+
 module.exports = {
   ...config,
   extends: [...config.extends, 'plugin:lit/recommended', 'prettier'],
   parserOptions: { ...config.parserOptions, project: ['./tsconfig.json', './src/tsconfig.json'], projectService: true },
+  plugins: [...config.plugins, 'rulesdir'],
   rules: {
     ...config.rules,
     '@typescript-eslint/no-floating-promises': 'error',
@@ -22,6 +26,7 @@ module.exports = {
         'newlines-between': 'always',
       },
     ],
+    'rulesdir/css-properties-defined': 'error',
   },
   overrides: [
     {
