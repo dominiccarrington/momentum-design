@@ -7,6 +7,13 @@ module.exports = {
   create(context) {
     return {
       TaggedTemplateExpression: node => {
+        const filename = context.getFilename();
+
+        // Only process .component.ts files
+        if (!filename.endsWith('.component.ts')) {
+          return;
+        }
+
         if (node.type === 'TaggedTemplateExpression' && node.tag.type === 'Identifier' && node.tag.name === 'html') {
           let classNode = node;
           do {
