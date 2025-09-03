@@ -37,17 +37,18 @@ module.exports = {
                 return;
               }
 
-              // Ignore dynamic parts
-              if (element.attribs.part.startsWith('{{__Q:')) {
-                return;
-              }
-
-              if (!cssparts.has(element.attribs.part)) {
-                context.report({
-                  node: classNode.id,
-                  message: `The csspart "${element.attribs.part}" is used in a template but is missing a @csspart TSDoc.`,
-                });
-              }
+              const parts = element.attribs.part
+                .split(/\s+/)
+                .map(name => name.trim())
+                .filter(name => name.length > 0 && !name.startsWith('{{__Q:'));
+              parts.forEach(part => {
+                if (!cssparts.has(part)) {
+                  context.report({
+                    node: classNode.id,
+                    message: `The csspart "${part}" is used in a template but is missing a @csspart TSDoc.`,
+                  });
+                }
+              });
             },
           });
         }

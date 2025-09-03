@@ -41,17 +41,19 @@ module.exports = {
                 return;
               }
 
-              // Ignore dynamic parts
-              if (element.attribs.name.startsWith('{{__Q:')) {
-                return;
-              }
+              const names = element.attribs.name
+                .split(/\s+/)
+                .map(name => name.trim())
+                .filter(name => name.length > 0 && !name.startsWith('{{__Q:'));
 
-              if (!slots.has(element.attribs.name)) {
-                context.report({
-                  node: classNode.id,
-                  message: `The slot "${element.attribs.name}" is used in a template but is missing a @slot TSDoc.`,
-                });
-              }
+              names.forEach(name => {
+                if (!slots.has(name)) {
+                  context.report({
+                    node: classNode.id,
+                    message: `The slot "${name}" is used in a template but is missing a @slot TSDoc.`,
+                  });
+                }
+              });
             },
           });
         }
