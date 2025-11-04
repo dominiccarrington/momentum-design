@@ -266,7 +266,6 @@ test('mdc-dialog', async ({ componentsPage }) => {
 
       await test.step('matches screenshot for dialog with a focused textarea in body', async () => {
         const { dialog } = await setup({ componentsPage, ...dialogWithTextarea, size: 'small' });
-        await componentsPage.page.pause();
         await componentsPage.actionability.pressTab();
 
         await componentsPage.visualRegression.takeScreenshot('mdc-dialog-with-textarea', { element: dialog });
