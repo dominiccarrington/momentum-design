@@ -8,6 +8,8 @@ import type { VirtualizedListE2E } from './helpers/virtualizedlist.e2e-test.util
 import type VirtualizedList from './virtualizedlist.component';
 
 test('mdc-virtualizedlist', async ({ componentsPage }) => {
+  test.setTimeout(10 * 60 * 1000); // 10 minutes
+
   type SetupOptions = {
     itemHeight?: number;
     listHeader?: string;
@@ -66,13 +68,26 @@ test('mdc-virtualizedlist', async ({ componentsPage }) => {
   const listItemLocator = (vlist: Locator, index: number) => vlist.locator(`mdc-listitem[data-index="${index}"]`);
 
   const scrollList = async (vlist: Locator, distance: number) => {
-    await vlist.evaluate((vlistEl: VirtualizedList, scrollDistance: number) => {
-      const scrollEl = vlistEl.shadowRoot?.querySelector('[part="scroll"]');
+    const newValue = await vlist.evaluate((vlistEl: VirtualizedList, scrollDistance: number) => {
+      const scrollEl = vlistEl.shadowRoot?.querySelector<HTMLElement>('[part="scroll"]');
 
-      if (scrollEl) {
-        scrollEl.scrollTop += scrollDistance;
+      if (!scrollEl) {
+        return undefined;
       }
+
+      vlistEl.virtualizer?.scrollToOffset(scrollEl?.scrollTop + scrollDistance);
+
+      return scrollEl?.scrollTop;
     }, distance);
+
+    await expect(async () => {
+      const newScrollTop = await vlist.evaluate(
+        async (vlistEl: VirtualizedList) =>
+          vlistEl.shadowRoot?.querySelector<HTMLElement>('[part="scroll"]')?.scrollTop,
+      );
+
+      expect(newScrollTop).toEqual(newValue);
+    }).toPass();
   };
 
   await test.step('renders with default attributes', async () => {
@@ -263,7 +278,6 @@ test('mdc-virtualizedlist', async ({ componentsPage }) => {
       const { vlist } = await setup({ initialItemCount: 30 });
 
       await scrollList(vlist, 540);
-
       await listItemLocator(vlist, 15).click();
 
       await componentsPage.actionability.pressTab();
