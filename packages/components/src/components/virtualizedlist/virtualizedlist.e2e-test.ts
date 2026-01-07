@@ -66,32 +66,16 @@ test('mdc-virtualizedlist', async ({ componentsPage }) => {
   const listItemLocator = (vlist: Locator, index: number) => vlist.locator(`mdc-listitem[data-index="${index}"]`);
 
   const scrollList = async (vlist: Locator, distance: number) => {
-    const scrollTop = async () =>
-      vlist.evaluate(
-        async (vlistEl: VirtualizedList) =>
-          vlistEl.shadowRoot?.querySelector<HTMLElement>('[part="scroll"]')!.scrollTop!,
-      );
-
-    const beforeScrollTop = await scrollTop();
-
     await vlist.hover();
-    await componentsPage.page.mouse.wheel(0, distance);
-    // mouse.wheel does not wait for any scroll events to finish
-    await componentsPage.page.waitForTimeout(200);
-
-    const afterMouseWheel = await scrollTop();
-    if (afterMouseWheel - beforeScrollTop === distance) {
-      return;
-    }
-
-    const extraNeeded = distance - (afterMouseWheel - beforeScrollTop);
-
     await vlist.evaluate((vlistEl: VirtualizedList, scrollAmount: number) => {
       const scrollEl = vlistEl.shadowRoot?.querySelector<HTMLElement>('[part="scroll"]');
       if (scrollEl) {
         scrollEl.scrollBy(0, scrollAmount);
       }
-    }, extraNeeded);
+    }, distance);
+
+    // wait for scroll to finish
+    await componentsPage.page.waitForTimeout(200);
   };
 
   await test.step('renders with default attributes', async () => {
