@@ -238,6 +238,13 @@ test('mdc-searchpopover', async ({ componentsPage }) => {
       await expect(firstListItemInPopover).toBeFocused();
     });
 
+    await test.step('first listitem should be focused when down arrow is pressed', async () => {
+      await componentsPage.actionability.pressShiftTab();
+      await componentsPage.actionability.pressShiftTab();
+      await componentsPage.page.keyboard.press('ArrowDown');
+      await expect(firstListItemInPopover).toBeFocused();
+    });
+
     // AI-Assisted: controlled/uncontrolled chip removal tests
     const filterChip = searchpopover.locator('mdc-chip');
     await test.step('control-type attribute defaults to uncontrolled', async () => {

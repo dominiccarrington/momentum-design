@@ -1,6 +1,6 @@
 import { CSSResult, html } from 'lit';
 import { classMap } from 'lit-html/directives/class-map.js';
-import { property } from 'lit/decorators.js';
+import { property, query } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { live } from 'lit/directives/live.js';
 
@@ -8,6 +8,9 @@ import Searchfield from '../searchfield/searchfield.component';
 import { POPOVER_PLACEMENT } from '../popover/popover.constants';
 import { DEFAULTS as FORMFIELD_DEFAULTS } from '../formfieldwrapper/formfieldwrapper.constants';
 import { ROLE } from '../../utils/roles';
+import { ACTIONS } from '../../utils/mixins/KeyToActionMixin';
+import type Popover from '../popover/popover.component';
+import type ListItem from '../listitem/listitem.component';
 
 import styles from './searchpopover.styles';
 import { DEFAULTS, TRIGGER_ID, POPOVER_ID } from './searchpopover.constants';
@@ -90,6 +93,9 @@ import type { Placement } from './searchpopover.types';
  * @csspart popover-content - The popover content element.
  */
 class Searchpopover extends Searchfield {
+  @query(`#${POPOVER_ID}`)
+  protected popoverElement!: Popover;
+
   /**
    * Whether to display the popover.
    * @default false
@@ -132,6 +138,17 @@ class Searchpopover extends Searchfield {
    */
   protected override get scrollContainer(): HTMLElement | null {
     return this.shadowRoot?.querySelector('[part="filters-container"]') ?? null;
+  }
+
+  public override handleKeyDown(event: KeyboardEvent) {
+    super.handleKeyDown(event);
+    const action = this.getActionForKeyEvent(event);
+
+    if (action === ACTIONS.DOWN) {
+      if (this.popoverElement.visible) {
+        this.querySelector<ListItem>('mdc-listitem[tabindex="0"]')?.focus();
+      }
+    }
   }
 
   protected override renderInputElement() {
